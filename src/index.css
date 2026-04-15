@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+:root {
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  color: #1f2937;
+  background: #f8f5ef;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: linear-gradient(180deg, #f8f5ef 0%, #f1ebe2 100%);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+* {
+  box-sizing: border-box;
+}
