@@ -218,11 +218,11 @@ export default function GedDiamantesErpDemoMockup() {
           <div className="rounded-[32px] border border-white/70 bg-white/74 p-5 shadow-[0_20px_48px_rgba(72,58,42,0.08)] backdrop-blur-xl">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#d8c39f_0%,#a88559_100%)] text-lg font-semibold text-white shadow-[0_10px_22px_rgba(152,117,78,0.35)]">
-                O7
+                GD
               </div>
               <div>
                 <p className="text-[11px] uppercase tracking-[0.26em] text-[#988368]">ERP demo</p>
-                <h2 className="mt-1 text-lg font-semibold tracking-[-0.02em] text-[#26313d]">GED Diamantes</h2>
+                <h2 className="mt-1 text-lg font-semibold tracking-[-0.02em] text-[#26313d]">Grupo Diamantes</h2>
               </div>
             </div>
           </div>
@@ -250,7 +250,7 @@ export default function GedDiamantesErpDemoMockup() {
           <div className="mt-8 rounded-[30px] border border-[#eadfce] bg-[linear-gradient(180deg,#faf7f2_0%,#f4eee6_100%)] p-5 shadow-[0_12px_30px_rgba(72,58,42,0.06)]">
             <p className="text-xs uppercase tracking-[0.26em] text-[#9a8668]">Objetivo</p>
             <p className="mt-3 text-sm leading-6 text-[#5f6873]">
-              Mostrar una versión más premium de O7 alineada con la estructura real del negocio de GED.
+              Mostrar una versión más premium de Grupo Diamantes alineada con la estructura real del negocio de GED.
             </p>
           </div>
 
@@ -293,7 +293,7 @@ export default function GedDiamantesErpDemoMockup() {
             <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
               <div className="flex flex-wrap items-center gap-3">
                 <div className="rounded-full border border-white/70 bg-white/74 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#8d7a60] shadow-sm backdrop-blur-xl">
-                  Demo ERP O7 · V6
+                  Demo ERP Grupo Diamantes · V6
                 </div>
                 <div className="rounded-full border border-[#e7dccb] bg-[#faf5ee] px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-[#8b785d] shadow-sm">
                   Premium boardroom UI
@@ -391,7 +391,7 @@ export default function GedDiamantesErpDemoMockup() {
                 <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
                   <div>
                     <p className="text-sm uppercase tracking-[0.32em] text-[#d7c4a5]">Núcleo del sistema</p>
-                    <h2 className="mt-3 text-4xl font-semibold tracking-[-0.05em] lg:text-6xl">ERP empresarial O7</h2>
+                    <h2 className="mt-3 text-4xl font-semibold tracking-[-0.05em] lg:text-6xl">ERP empresarial Grupo Diamantes</h2>
                     <p className="mt-4 max-w-3xl text-sm leading-6 text-white/80 lg:text-base">
                       Centro de control para ejecutivos, gerentes, personal experto, técnico y operativo. Desde aquí
                       se administran clientes, operaciones, finanzas, documentos y seguimiento.
@@ -510,7 +510,7 @@ export default function GedDiamantesErpDemoMockup() {
               <div className="rounded-[36px] border border-white/82 bg-white/90 p-6 shadow-[0_20px_48px_rgba(72,58,42,0.06)] lg:p-8">
                 <p className="text-sm uppercase tracking-[0.3em] text-[#95836a]">Flujo propuesto</p>
                 <h3 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-[#26313d]">
-                  Cómo se usaría GED Diamantes dentro de O7
+                  Cómo se usaría GED Diamantes dentro de Grupo Diamantes
                 </h3>
                 <div className="mt-6 space-y-4">
                   {processFlow.map((item) => (
