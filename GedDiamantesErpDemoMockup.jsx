@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 export default function GedDiamantesErpDemoMockup() {
   const executiveCards = [
     {
@@ -57,7 +59,50 @@ export default function GedDiamantesErpDemoMockup() {
     { label: "Pólizas / seguros", value: "112", foot: "11 renovaciones" },
   ];
 
-  const mobileNavItems = ["Resumen", "Gobierno", "ERP", "Integraciones"];
+  const moduleNavItems = [
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      eyebrow: "Boardroom",
+      summary: "Control ejecutivo general",
+    },
+    {
+      id: "crm",
+      label: "CRM",
+      eyebrow: "Relación",
+      summary: "Prospectos, cuentas y leads",
+    },
+    {
+      id: "sales",
+      label: "Sales",
+      eyebrow: "Pipeline",
+      summary: "Obras, propuestas y cierres",
+    },
+    {
+      id: "post-sales",
+      label: "Post-Sales",
+      eyebrow: "Servicio",
+      summary: "Atención, SLA e incidencias",
+    },
+    {
+      id: "finance",
+      label: "Finance",
+      eyebrow: "Tesorería",
+      summary: "Bancos, cobranza y control",
+    },
+    {
+      id: "ged",
+      label: "GED",
+      eyebrow: "Expediente",
+      summary: "Gobierno, documentos y trazabilidad",
+    },
+    {
+      id: "settings",
+      label: "Settings",
+      eyebrow: "Configuración",
+      summary: "Permisos, catálogos e integraciones",
+    },
+  ];
 
   const externalSystems = [
     {
@@ -196,20 +241,162 @@ export default function GedDiamantesErpDemoMockup() {
   ];
 
   const navItems = [
-    "Resumen ejecutivo",
-    "Dirección y gobierno",
-    "ERP central",
-    "Obras y servicios",
-    "Finanzas y bancos",
-    "Integraciones",
-    "Casos activos",
+    { id: "overview", label: "Resumen ejecutivo" },
+    { id: "governance", label: "Dirección y gobierno" },
+    { id: "erp-core", label: "ERP central" },
+    { id: "operations", label: "Obras y servicios" },
+    { id: "finance", label: "Finanzas y bancos" },
+    { id: "integrations", label: "Integraciones" },
+    { id: "cases", label: "Casos activos" },
   ];
 
   const quickActions = [
-    { label: "Nuevo caso", key: "NC" },
-    { label: "Nueva obra", key: "NO" },
-    { label: "Reporte ejecutivo", key: "RE" },
+    { label: "Nuevo caso", key: "NC", module: "post-sales", section: "cases" },
+    { label: "Nueva obra", key: "NO", module: "sales", section: "operations" },
+    { label: "Reporte ejecutivo", key: "RE", module: "dashboard", section: "overview" },
   ];
+
+  const moduleViews = {
+    dashboard: {
+      title: "Dashboard ejecutivo",
+      eyebrow: "Boardroom",
+      description: "Vista integral para Presidencia, Consejo y Dirección con foco en gobierno, operación y seguimiento.",
+      primary: "Abrir centro ejecutivo",
+      secondary: "Ver acuerdos vigentes",
+    },
+    crm: {
+      title: "CRM comercial",
+      eyebrow: "Relación con cuentas",
+      description: "Seguimiento de leads, convenios, cuentas activas y oportunidades que alimentan la operación GED.",
+      primary: "Abrir pipeline comercial",
+      secondary: "Ver cuentas clave",
+    },
+    sales: {
+      title: "Sales de obras y cierres",
+      eyebrow: "Pipeline de ingresos",
+      description: "Control de propuestas, presupuestos, obras en negociación y capacidad comercial por unidad.",
+      primary: "Revisar propuestas activas",
+      secondary: "Ver forecast mensual",
+    },
+    "post-sales": {
+      title: "Post-Sales operativo",
+      eyebrow: "Servicio y continuidad",
+      description: "Supervisión de servicios, incidencias, SLA, continuidad operativa y atención de clientes activos.",
+      primary: "Abrir bandeja de servicios",
+      secondary: "Ver incidencias críticas",
+    },
+    finance: {
+      title: "Finance y tesorería",
+      eyebrow: "Flujo y control",
+      description: "Bancos, cobranza, conciliación, seguros y visibilidad financiera conectados al ERP corporativo.",
+      primary: "Ir a tesorería",
+      secondary: "Ver conciliación del día",
+    },
+    ged: {
+      title: "GED documental",
+      eyebrow: "Gobierno documental",
+      description: "Expedientes, pólizas, validaciones directivas y trazabilidad documental para toda la operación.",
+      primary: "Abrir expedientes GED",
+      secondary: "Ver aprobaciones pendientes",
+    },
+    settings: {
+      title: "Settings de plataforma",
+      eyebrow: "Configuración premium",
+      description: "Permisos, perfiles, catálogos, telefonía, sincronizaciones e integraciones del entorno de trabajo.",
+      primary: "Ver permisos",
+      secondary: "Revisar integraciones",
+    },
+  };
+
+  const executiveRoutes = {
+    "Presidencia del GED": "dashboard",
+    "Consejo de Administración": "ged",
+    "Director BGE": "finance",
+    "Director MVT": "sales",
+    "Director CGS": "post-sales",
+    "Director AMN": "crm",
+  };
+
+  const integrationRoutes = {
+    Seguros: "finance",
+    "Telefonía celular": "settings",
+    Bancos: "finance",
+    Obras: "sales",
+    Servicios: "post-sales",
+    "Beneficios comerciales": "crm",
+    "Página web y email": "crm",
+  };
+
+  const caseRoutes = {
+    Obra: "sales",
+    Servicio: "post-sales",
+    Seguro: "finance",
+    "Beneficio comercial": "crm",
+  };
+
+  const statRoutes = {
+    "Obras activas": "sales",
+    "Servicios en curso": "post-sales",
+    "Cobranza pendiente": "finance",
+    "Pólizas / seguros": "ged",
+  };
+
+  const resolveModuleFromHash = () => {
+    if (typeof window === "undefined") {
+      return "dashboard";
+    }
+
+    const hash = window.location.hash.replace("#", "").toLowerCase();
+    return moduleNavItems.some((item) => item.id === hash) ? hash : "dashboard";
+  };
+
+  const [activeModule, setActiveModule] = useState(resolveModuleFromHash);
+  const [activeSection, setActiveSection] = useState("overview");
+  const [selectedExecutive, setSelectedExecutive] = useState(executiveCards[0].title);
+  const [selectedIntegration, setSelectedIntegration] = useState(externalSystems[0].title);
+  const [selectedCase, setSelectedCase] = useState(recentItems[0].id);
+  const [prototypeNote, setPrototypeNote] = useState("Prototype actif: Dashboard ejecutif");
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
+    const handleHashChange = () => {
+      setActiveModule(resolveModuleFromHash());
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  const navigateModule = (moduleId, note) => {
+    setActiveModule(moduleId);
+    setPrototypeNote(note ?? `Module actif: ${moduleViews[moduleId].title}`);
+
+    if (typeof window !== "undefined") {
+      window.history.replaceState(null, "", `#${moduleId}`);
+    }
+  };
+
+  const navigateSection = (sectionId, note) => {
+    setActiveSection(sectionId);
+    setPrototypeNote(note ?? `Section active: ${navItems.find((item) => item.id === sectionId)?.label ?? sectionId}`);
+
+    if (typeof document !== "undefined") {
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  const triggerQuickAction = (action) => {
+    navigateModule(action.module, `Action simulée: ${action.label}`);
+    navigateSection(action.section, `Action simulée: ${action.label}`);
+  };
+
+  const activeModuleView = moduleViews[activeModule];
+  const selectedExecutiveCard = executiveCards.find((card) => card.title === selectedExecutive) ?? executiveCards[0];
+  const selectedIntegrationCard = externalSystems.find((item) => item.title === selectedIntegration) ?? externalSystems[0];
+  const selectedCaseCard = recentItems.find((item) => item.id === selectedCase) ?? recentItems[0];
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#f8f5ef_0%,#f1ebe2_100%)] text-slate-900">
@@ -228,23 +415,47 @@ export default function GedDiamantesErpDemoMockup() {
           </div>
 
           <div className="mt-6 space-y-2.5">
-            {navItems.map((item, index) => (
-              <div
-                key={item}
-                className={`group relative overflow-hidden rounded-[22px] px-4 py-3 text-sm font-medium transition duration-300 ${
-                  index === 0
+            {moduleNavItems.map((item, index) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => navigateModule(item.id)}
+                className={`group relative w-full overflow-hidden rounded-[22px] px-4 py-3 text-left text-sm font-medium transition duration-300 ${
+                  activeModule === item.id
                     ? "bg-[linear-gradient(135deg,#2f3d4f_0%,#45586d_100%)] text-white shadow-[0_14px_35px_rgba(52,67,85,0.24)]"
                     : "border border-white/75 bg-white/74 text-[#5d6874] shadow-[0_10px_26px_rgba(72,58,42,0.05)] hover:bg-white/95"
                 }`}
               >
                 <span
                   className={`absolute left-0 top-0 h-full w-1 rounded-r-full ${
-                    index === 0 ? "bg-[#dbc49f]" : "bg-transparent group-hover:bg-[#d7c2a0]/70"
+                    activeModule === item.id ? "bg-[#dbc49f]" : "bg-transparent group-hover:bg-[#d7c2a0]/70"
                   }`}
                 />
-                <span className="relative">{item}</span>
-              </div>
+                <span className="relative block text-[11px] uppercase tracking-[0.22em] opacity-70">{item.eyebrow}</span>
+                <span className="relative mt-1 block text-sm font-semibold">{item.label}</span>
+                <span className="relative mt-1 block text-xs opacity-75">{item.summary}</span>
+              </button>
             ))}
+          </div>
+
+          <div className="mt-6 rounded-[30px] border border-[#e6dccd] bg-white/74 p-5 shadow-[0_14px_34px_rgba(72,58,42,0.06)] backdrop-blur-xl">
+            <p className="text-xs uppercase tracking-[0.26em] text-[#9a8668]">Vistas internas</p>
+            <div className="mt-4 space-y-2.5">
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => navigateSection(item.id)}
+                  className={`w-full rounded-[20px] border px-4 py-3 text-left text-sm font-medium transition ${
+                    activeSection === item.id
+                      ? "border-[#d8c4a4] bg-[#fbf7f1] text-[#32404d] shadow-[0_10px_24px_rgba(72,58,42,0.06)]"
+                      : "border-white/75 bg-white/65 text-[#687380] hover:border-[#e6d8c4] hover:bg-white"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="mt-8 rounded-[30px] border border-[#eadfce] bg-[linear-gradient(180deg,#faf7f2_0%,#f4eee6_100%)] p-5 shadow-[0_12px_30px_rgba(72,58,42,0.06)]">
@@ -260,7 +471,9 @@ export default function GedDiamantesErpDemoMockup() {
               {quickActions.map((action) => (
                 <button
                   key={action.label}
-                  className="group flex w-full items-center gap-3 rounded-2xl border border-[#ece2d4] bg-[#faf7f2] px-4 py-3 text-left text-sm font-medium text-[#55616e] transition duration-300 hover:border-[#e2d3be] hover:bg-white"
+                  type="button"
+                  onClick={() => triggerQuickAction(action)}
+                  className="group flex w-full items-center gap-3 rounded-2xl border border-[#ece2d4] bg-[#faf7f2] px-4 py-3 text-left text-sm font-medium text-[#55616e] transition duration-300 hover:border-[#e2d3be] hover:bg-white hover:shadow-[0_12px_28px_rgba(72,58,42,0.06)]"
                 >
                   <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#e6d3b6_0%,#ccb08a_100%)] text-[10px] font-semibold tracking-[0.12em] text-[#5a4936] shadow-sm">
                     {action.key}
@@ -276,17 +489,19 @@ export default function GedDiamantesErpDemoMockup() {
         <div className="min-w-0 flex-1">
           <div className="border-b border-white/60 bg-[radial-gradient(circle_at_top_left,#fcfaf6_0%,#eee6db_38%,#e5dccf_100%)] px-5 pb-6 pt-5 sm:px-6 lg:px-8">
             <div className="mb-4 flex gap-2 overflow-x-auto pb-1 lg:hidden">
-              {mobileNavItems.map((item, index) => (
-                <div
-                  key={item}
+              {moduleNavItems.map((item, index) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => navigateModule(item.id)}
                   className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] ${
-                    index === 0
+                    activeModule === item.id
                       ? "bg-[linear-gradient(135deg,#2f3d4f_0%,#45586d_100%)] text-white shadow-[0_12px_28px_rgba(52,67,85,0.20)]"
                       : "border border-white/75 bg-white/76 text-[#7a8692] shadow-sm"
                   }`}
                 >
-                  {item}
-                </div>
+                  {item.label}
+                </button>
               ))}
             </div>
 
@@ -335,6 +550,23 @@ export default function GedDiamantesErpDemoMockup() {
               </div>
             </div>
 
+            <div className="mb-5 flex flex-wrap items-center gap-2">
+              {moduleNavItems.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => navigateModule(item.id)}
+                  className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] transition ${
+                    activeModule === item.id
+                      ? "border-[#314253] bg-[linear-gradient(135deg,#2f3d4f_0%,#45586d_100%)] text-white shadow-[0_12px_28px_rgba(52,67,85,0.16)]"
+                      : "border-white/75 bg-white/72 text-[#7a8692] hover:bg-white"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+
             <div className="relative overflow-hidden rounded-[34px] border border-white/65 bg-[linear-gradient(135deg,#fdfbf8_0%,#f2ebe0_45%,#ebe2d6_100%)] p-6 shadow-[0_18px_42px_rgba(74,60,44,0.08)] lg:p-8">
               <div className="pointer-events-none absolute inset-0 opacity-45">
                 <div className="absolute -right-8 top-0 h-48 w-48 rounded-full bg-white blur-3xl" />
@@ -343,27 +575,37 @@ export default function GedDiamantesErpDemoMockup() {
 
               <div className="relative flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
                 <div>
+                  <div className="mb-3 inline-flex rounded-full border border-[#e6dbc9] bg-white/70 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#8c7960] backdrop-blur-xl">
+                    {activeModuleView.eyebrow} · {activeModuleView.title}
+                  </div>
                   <h1 className="text-3xl font-semibold tracking-[-0.04em] text-[#26313d] lg:text-5xl">
                     GED Diamantes · maqueta premium
                   </h1>
                   <p className="mt-4 max-w-3xl text-sm leading-6 text-[#626c77] lg:text-base">
-                    Interfaz de demostración basada en Presidencia, Consejo, Directores, personal operativo y
-                    relación del ERP con los sistemas externos del negocio.
+                    {activeModuleView.description}
                   </p>
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[600px]">
-                  <div className="rounded-[24px] border border-white/75 bg-white/80 px-4 py-4 shadow-[0_14px_34px_rgba(74,60,44,0.06)] backdrop-blur-xl transition hover:-translate-y-0.5">
-                    <div className="text-xs uppercase tracking-[0.24em] text-[#9c8769]">Rol activo</div>
-                    <div className="mt-2 text-sm font-semibold text-[#2f3c4a]">Vista Presidencia</div>
-                  </div>
-                  <div className="rounded-[24px] border border-white/75 bg-white/80 px-4 py-4 shadow-[0_14px_34px_rgba(74,60,44,0.06)] backdrop-blur-xl transition hover:-translate-y-0.5">
-                    <div className="text-xs uppercase tracking-[0.24em] text-[#9c8769]">Estado</div>
-                    <div className="mt-2 text-sm font-semibold text-[#2f3c4a]">Demo conceptual</div>
-                  </div>
-                  <div className="rounded-[24px] border border-white/75 bg-white/80 px-4 py-4 shadow-[0_14px_34px_rgba(74,60,44,0.06)] backdrop-blur-xl transition hover:-translate-y-0.5">
-                    <div className="text-xs uppercase tracking-[0.24em] text-[#9c8769]">Enfoque</div>
-                    <div className="mt-2 text-sm font-semibold text-[#2f3c4a]">Dirección + operación</div>
+                  <button
+                    type="button"
+                    onClick={() => setPrototypeNote(`Ruta simulada: ${activeModuleView.primary}`)}
+                    className="rounded-[24px] border border-white/75 bg-white/80 px-4 py-4 text-left shadow-[0_14px_34px_rgba(74,60,44,0.06)] backdrop-blur-xl transition hover:-translate-y-0.5"
+                  >
+                    <div className="text-xs uppercase tracking-[0.24em] text-[#9c8769]">Ruta activa</div>
+                    <div className="mt-2 text-sm font-semibold text-[#2f3c4a]">{activeModuleView.primary}</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPrototypeNote(`Acceso rápido: ${activeModuleView.secondary}`)}
+                    className="rounded-[24px] border border-white/75 bg-white/80 px-4 py-4 text-left shadow-[0_14px_34px_rgba(74,60,44,0.06)] backdrop-blur-xl transition hover:-translate-y-0.5"
+                  >
+                    <div className="text-xs uppercase tracking-[0.24em] text-[#9c8769]">Acceso sugerido</div>
+                    <div className="mt-2 text-sm font-semibold text-[#2f3c4a]">{activeModuleView.secondary}</div>
+                  </button>
+                  <div className="rounded-[24px] border border-white/75 bg-white/80 px-4 py-4 shadow-[0_14px_34px_rgba(74,60,44,0.06)] backdrop-blur-xl">
+                    <div className="text-xs uppercase tracking-[0.24em] text-[#9c8769]">Prototype note</div>
+                    <div className="mt-2 text-sm font-semibold text-[#2f3c4a]">{prototypeNote}</div>
                   </div>
                 </div>
               </div>
@@ -386,7 +628,7 @@ export default function GedDiamantesErpDemoMockup() {
           </div>
 
           <main className="space-y-8 px-5 py-6 sm:px-6 lg:px-8 lg:py-8">
-            <section className="grid grid-cols-1 gap-5 xl:grid-cols-[1.2fr_0.8fr]">
+            <section id="overview" className="grid scroll-mt-24 grid-cols-1 gap-5 xl:grid-cols-[1.2fr_0.8fr]">
               <div className="overflow-hidden rounded-[40px] border border-[#dad0c4] bg-[linear-gradient(135deg,#273442_0%,#364759_52%,#506276_100%)] p-8 text-white shadow-[0_30px_86px_rgba(48,60,75,0.24)] lg:p-10">
                 <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
                   <div>
@@ -409,23 +651,35 @@ export default function GedDiamantesErpDemoMockup() {
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {operationalStats.map((stat) => (
-                  <div
+                  <button
                     key={stat.label}
-                    className="rounded-[30px] border border-white/82 bg-white/88 p-5 shadow-[0_18px_42px_rgba(72,58,42,0.06)] backdrop-blur transition hover:-translate-y-0.5"
+                    type="button"
+                    onClick={() => navigateModule(statRoutes[stat.label], `KPI ouvert: ${stat.label}`)}
+                    className="rounded-[30px] border border-white/82 bg-white/88 p-5 text-left shadow-[0_18px_42px_rgba(72,58,42,0.06)] backdrop-blur transition hover:-translate-y-0.5 hover:shadow-[0_20px_44px_rgba(72,58,42,0.10)]"
                   >
                     <div className="text-3xl font-semibold tracking-[-0.04em] text-[#2c3846]">{stat.value}</div>
                     <div className="mt-2 text-sm text-[#707985]">{stat.label}</div>
-                    <div className="mt-2 text-xs uppercase tracking-[0.14em] text-[#9ca5af]">{stat.foot}</div>
-                  </div>
+                    <div className="mt-2 flex items-center justify-between text-xs uppercase tracking-[0.14em] text-[#9ca5af]">
+                      <span>{stat.foot}</span>
+                      <span className="font-semibold text-[#7e8a97]">Abrir vista</span>
+                    </div>
+                  </button>
                 ))}
               </div>
             </section>
 
-            <section className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <section id="governance" className="grid scroll-mt-24 grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
               {executiveCards.map((card) => (
-                <div
+                <button
                   key={card.title}
-                  className="rounded-[32px] border border-white/82 bg-white/90 p-6 shadow-[0_20px_48px_rgba(72,58,42,0.07)] backdrop-blur transition duration-300 hover:-translate-y-0.5"
+                  type="button"
+                  onClick={() => {
+                    setSelectedExecutive(card.title);
+                    navigateModule(executiveRoutes[card.title], `Vista directiva abierta: ${card.title}`);
+                  }}
+                  className={`rounded-[32px] border bg-white/90 p-6 text-left shadow-[0_20px_48px_rgba(72,58,42,0.07)] backdrop-blur transition duration-300 hover:-translate-y-0.5 ${
+                    selectedExecutive === card.title ? "border-[#d5bea0] ring-1 ring-[#e7d5bb]" : "border-white/82"
+                  }`}
                 >
                   <div
                     className="mb-5 h-1.5 w-24 rounded-full"
@@ -455,11 +709,72 @@ export default function GedDiamantesErpDemoMockup() {
                   <div className="mt-4 rounded-2xl border border-[#e8dfd3] bg-white px-4 py-3 text-xs uppercase tracking-[0.16em] text-[#8b96a2]">
                     Vista preparada para seguimiento directivo y validación ejecutiva
                   </div>
-                </div>
+                </button>
               ))}
             </section>
 
-            <section className="rounded-[36px] border border-white/82 bg-white/90 p-6 shadow-[0_20px_48px_rgba(72,58,42,0.06)] lg:p-8">
+            <section className="grid grid-cols-1 gap-5 xl:grid-cols-[0.95fr_1.05fr]">
+              <div className="rounded-[36px] border border-white/82 bg-white/90 p-6 shadow-[0_20px_48px_rgba(72,58,42,0.06)] lg:p-8">
+                <p className="text-sm uppercase tracking-[0.3em] text-[#95836a]">Vista detalle activa</p>
+                <h3 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-[#26313d]">
+                  {selectedExecutiveCard.title}
+                </h3>
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-[#6b7682] lg:text-base">
+                  {selectedExecutiveCard.subtitle} con foco en {selectedExecutiveCard.governance.toLowerCase()} y revisión programada para{" "}
+                  {selectedExecutiveCard.nextReview}.
+                </p>
+                <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-[24px] border border-[#ebe2d6] bg-[#fcf8f2] p-4">
+                    <div className="text-xs uppercase tracking-[0.18em] text-[#9ba4ae]">Indicadores</div>
+                    <div className="mt-2 text-lg font-semibold text-[#33404d]">{selectedExecutiveCard.value}</div>
+                  </div>
+                  <div className="rounded-[24px] border border-[#ebe2d6] bg-[#fcf8f2] p-4">
+                    <div className="text-xs uppercase tracking-[0.18em] text-[#9ba4ae]">Módulo</div>
+                    <div className="mt-2 text-lg font-semibold text-[#33404d]">
+                      {moduleViews[executiveRoutes[selectedExecutiveCard.title]].title}
+                    </div>
+                  </div>
+                  <div className="rounded-[24px] border border-[#ebe2d6] bg-[#fcf8f2] p-4">
+                    <div className="text-xs uppercase tracking-[0.18em] text-[#9ba4ae]">Estado</div>
+                    <div className="mt-2 text-lg font-semibold text-[#33404d]">Seguimiento activo</div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="erp-core" className="rounded-[36px] border border-white/82 bg-white/90 p-6 shadow-[0_20px_48px_rgba(72,58,42,0.06)] lg:p-8">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                  <div>
+                    <p className="text-sm uppercase tracking-[0.3em] text-[#95836a]">Workspace activo</p>
+                    <h3 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-[#26313d]">
+                      {activeModuleView.title}
+                    </h3>
+                    <p className="mt-3 max-w-2xl text-sm leading-6 text-[#6b7682] lg:text-base">{activeModuleView.description}</p>
+                  </div>
+                  <div className="rounded-[28px] border border-[#e8ddce] bg-[linear-gradient(180deg,#fbf7f1_0%,#f4ede4_100%)] p-4 text-sm text-[#5f6a76] shadow-[0_12px_28px_rgba(72,58,42,0.05)]">
+                    Ruta mock activa<br />
+                    <span className="mt-2 block font-semibold text-[#2f3c4a]">#{activeModule}</span>
+                  </div>
+                </div>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setPrototypeNote(`Prototype CTA: ${activeModuleView.primary}`)}
+                    className="rounded-full border border-[#d5c3a7] bg-[#f6efe4] px-5 py-3 text-sm font-semibold text-[#6d5538] transition hover:bg-[#fbf5ec]"
+                  >
+                    {activeModuleView.primary}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPrototypeNote(`Prototype CTA: ${activeModuleView.secondary}`)}
+                    className="rounded-full border border-white/80 bg-white px-5 py-3 text-sm font-semibold text-[#52606d] transition hover:bg-[#fcfaf7]"
+                  >
+                    {activeModuleView.secondary}
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <section id="integrations" className="rounded-[36px] border border-white/82 bg-white/90 p-6 shadow-[0_20px_48px_rgba(72,58,42,0.06)] lg:p-8">
               <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <p className="text-sm uppercase tracking-[0.3em] text-[#95836a]">Integraciones de negocio</p>
@@ -474,9 +789,16 @@ export default function GedDiamantesErpDemoMockup() {
 
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
                 {externalSystems.map((item) => (
-                  <div
+                  <button
                     key={item.title}
-                    className="overflow-hidden rounded-[30px] border border-[#ece5da] bg-[#fcfaf7] shadow-[0_12px_30px_rgba(72,58,42,0.05)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(72,58,42,0.08)]"
+                    type="button"
+                    onClick={() => {
+                      setSelectedIntegration(item.title);
+                      navigateModule(integrationRoutes[item.title], `Integración abierta: ${item.title}`);
+                    }}
+                    className={`overflow-hidden rounded-[30px] border bg-[#fcfaf7] text-left shadow-[0_12px_30px_rgba(72,58,42,0.05)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(72,58,42,0.08)] ${
+                      selectedIntegration === item.title ? "border-[#d7c4a5] ring-1 ring-[#ebdcc8]" : "border-[#ece5da]"
+                    }`}
                   >
                     <div className={`bg-gradient-to-r ${item.accent} p-5 text-white`}>
                       <div className="flex items-center justify-between gap-3">
@@ -501,13 +823,13 @@ export default function GedDiamantesErpDemoMockup() {
                         <div className="mt-1 text-sm font-semibold text-[#3a4653]">{item.sync}</div>
                       </div>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
             </section>
 
             <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-              <div className="rounded-[36px] border border-white/82 bg-white/90 p-6 shadow-[0_20px_48px_rgba(72,58,42,0.06)] lg:p-8">
+              <div id="operations" className="rounded-[36px] border border-white/82 bg-white/90 p-6 shadow-[0_20px_48px_rgba(72,58,42,0.06)] lg:p-8">
                 <p className="text-sm uppercase tracking-[0.3em] text-[#95836a]">Flujo propuesto</p>
                 <h3 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-[#26313d]">
                   Cómo se usaría GED Diamantes dentro de Grupo Diamantes
@@ -530,7 +852,7 @@ export default function GedDiamantesErpDemoMockup() {
                 </div>
               </div>
 
-              <div className="rounded-[36px] border border-white/82 bg-white/90 p-6 shadow-[0_20px_48px_rgba(72,58,42,0.06)] lg:p-8">
+              <div id="cases" className="rounded-[36px] border border-white/82 bg-white/90 p-6 shadow-[0_20px_48px_rgba(72,58,42,0.06)] lg:p-8">
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <p className="text-sm uppercase tracking-[0.3em] text-[#95836a]">Ejemplos de registros</p>
@@ -545,9 +867,16 @@ export default function GedDiamantesErpDemoMockup() {
 
                 <div className="mt-6 space-y-4">
                   {recentItems.map((item) => (
-                    <div
+                    <button
                       key={item.id}
-                      className="rounded-[30px] border border-[#ece4d8] bg-[#fcfaf7] p-5 shadow-[0_10px_24px_rgba(72,58,42,0.04)] transition duration-300 hover:shadow-[0_16px_34px_rgba(72,58,42,0.07)]"
+                      type="button"
+                      onClick={() => {
+                        setSelectedCase(item.id);
+                        navigateModule(caseRoutes[item.type], `Caso abierto: ${item.id}`);
+                      }}
+                      className={`rounded-[30px] border bg-[#fcfaf7] p-5 text-left shadow-[0_10px_24px_rgba(72,58,42,0.04)] transition duration-300 hover:shadow-[0_16px_34px_rgba(72,58,42,0.07)] ${
+                        selectedCase === item.id ? "border-[#d7c4a5] ring-1 ring-[#e9dbc7]" : "border-[#ece4d8]"
+                      }`}
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
@@ -583,8 +912,55 @@ export default function GedDiamantesErpDemoMockup() {
                         <span>Última actualización</span>
                         <span className="font-semibold text-[#6d7885]">{item.updated}</span>
                       </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <section id="finance" className="grid scroll-mt-24 grid-cols-1 gap-6 xl:grid-cols-[0.92fr_1.08fr]">
+              <div className="rounded-[36px] border border-white/82 bg-white/90 p-6 shadow-[0_20px_48px_rgba(72,58,42,0.06)] lg:p-8">
+                <p className="text-sm uppercase tracking-[0.3em] text-[#95836a]">Contexto seleccionado</p>
+                <h3 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-[#26313d]">
+                  {selectedIntegrationCard.title}
+                </h3>
+                <p className="mt-3 text-sm leading-6 text-[#697480] lg:text-base">
+                  Integración activa dentro del prototype. Responsable: {selectedIntegrationCard.owner}. Frecuencia:{" "}
+                  {selectedIntegrationCard.sync}.
+                </p>
+                <div className="mt-6 space-y-3">
+                  {selectedIntegrationCard.items.map((entry) => (
+                    <div key={entry} className={`rounded-2xl border px-4 py-3 text-sm font-medium ${selectedIntegrationCard.soft}`}>
+                      {entry}
                     </div>
                   ))}
+                </div>
+              </div>
+
+              <div className="rounded-[36px] border border-white/82 bg-white/90 p-6 shadow-[0_20px_48px_rgba(72,58,42,0.06)] lg:p-8">
+                <p className="text-sm uppercase tracking-[0.3em] text-[#95836a]">Caso seleccionado</p>
+                <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h3 className="text-2xl font-semibold tracking-[-0.03em] text-[#26313d]">{selectedCaseCard.client}</h3>
+                    <p className="mt-2 text-sm text-[#73808c]">{selectedCaseCard.phase}</p>
+                  </div>
+                  <span className="rounded-full border border-[#eadfce] bg-[#f6efe6] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#7b6647]">
+                    {selectedCaseCard.status}
+                  </span>
+                </div>
+                <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  <div className="rounded-[24px] border border-[#ece4d8] bg-[#fcfaf7] p-4">
+                    <div className="text-xs uppercase tracking-[0.16em] text-[#99a2ac]">ID</div>
+                    <div className="mt-2 text-lg font-semibold text-[#364250]">{selectedCaseCard.id}</div>
+                  </div>
+                  <div className="rounded-[24px] border border-[#ece4d8] bg-[#fcfaf7] p-4">
+                    <div className="text-xs uppercase tracking-[0.16em] text-[#99a2ac]">Responsable</div>
+                    <div className="mt-2 text-lg font-semibold text-[#364250]">{selectedCaseCard.owner}</div>
+                  </div>
+                  <div className="rounded-[24px] border border-[#ece4d8] bg-[#fcfaf7] p-4">
+                    <div className="text-xs uppercase tracking-[0.16em] text-[#99a2ac]">Último update</div>
+                    <div className="mt-2 text-lg font-semibold text-[#364250]">{selectedCaseCard.updated}</div>
+                  </div>
                 </div>
               </div>
             </section>
